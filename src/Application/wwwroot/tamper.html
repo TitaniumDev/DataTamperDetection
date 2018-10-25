@@ -1,0 +1,83 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Digital Signing Demo</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/navbar-top.css" rel="stylesheet">
+    <!--<link href="css/submit.css" rel="stylesheet">-->
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+        <a class="navbar-brand" href="#">Data Tamper Detection</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link active" href="tamper.html">Tamper</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="verify.html">Verify</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main role="main" class="container">
+        <h1 class="h3 mb-3 font-weight-normal">Please enter a contact with which to tamper</h1>
+        <form id="tamperKeyForm" class="form-inline mt-2 mt-md-0" onsubmit="return false;">
+            <input id="Email" class="form-control" type="email" placeholder="Contact Email">
+            <button class="btn btn-outline-success my-2 my-sm-0" onclick="tamperKey(document.getElementById('Email').value)">Tamper</button>
+        </form>
+    </main>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery-slim.min.js"><\/script>')</script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        function tamperKey(data) {
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener("error", function (event) {
+                alert('Oops! Something went wrong.');
+            });
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    tamperKeyResponse(xhr.responseText);
+                }
+                if (xhr.status === 404) {
+                    alert('No key information was found for this contact.');
+                }
+            };
+            var submitUrl = window.location.origin + "/api/key/tamper";
+            xhr.open('POST', submitUrl);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.send(JSON.stringify(data));
+        }
+    </script>
+    <script>
+        function tamperKeyResponse(reply) {
+            alert(JSON.stringify(reply));
+            document.getElementById("tamperKeyForm").reset();
+        }
+    </script>
+</body>
+</html>
